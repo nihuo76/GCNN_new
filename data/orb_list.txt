@@ -1,0 +1,16 @@
+d_z^2
+d_{x^2-y^2}
+d_{xy}
+d_{xz}
+d_{yz}
+f_{x(x^2-3y^2)}
+f_{xyz}
+f_{xz^2}
+f_{y(3x^2-y^2)}
+f_{yz^2}
+f_{z(x^2-y^2)}
+f_{z^3}
+p_x
+p_y
+p_z
+s
