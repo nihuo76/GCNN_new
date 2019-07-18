@@ -28,7 +28,7 @@ crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx,
 #                              betas=(0.9, 0.999), eps=1e-08,
 #                              weight_decay=0, amsgrad=False)
 
-n_epoch = 2000
+n_epoch = 5
 lr = 0.001
 
 for i in range(5):
@@ -37,19 +37,19 @@ for i in range(5):
     train_accs, val_accs, train_loss = train_val(n_epoch=n_epoch, lr_input=lr,
                                                  dataset=dataset, training_idx=train_idx,
                                                  val_idx=val_idx, load=False)
-    plt.figure()
-    plt.subplot(2, 1, 1)
-    plt.plot(np.arange(n_epoch), train_accs, color='blue', label='train')
-    plt.plot(np.arange(n_epoch), val_accs, color='red', label='val')
-    plt.title('lr='+str(lr))
-    plt.ylabel("accuracy")
-    plt.legend()
-    plt.subplot(2, 1, 2)
-    plt.plot(np.arange(n_epoch), train_loss)
-    plt.xlabel("epoch")
-    plt.ylabel("training loss")
-    plt.savefig(fname='Result'+str(i))
-    plt.close()
+    # plt.figure()
+    # plt.subplot(2, 1, 1)
+    # plt.plot(np.arange(n_epoch), train_accs, color='blue', label='train')
+    # plt.plot(np.arange(n_epoch), val_accs, color='red', label='val')
+    # plt.title('lr='+str(lr))
+    # plt.ylabel("accuracy")
+    # plt.legend()
+    # plt.subplot(2, 1, 2)
+    # plt.plot(np.arange(n_epoch), train_loss)
+    # plt.xlabel("epoch")
+    # plt.ylabel("training loss")
+    # plt.savefig(fname='Result'+str(i))
+    # plt.close()
 
 
 
