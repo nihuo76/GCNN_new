@@ -28,15 +28,26 @@ crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx,
 #                              betas=(0.9, 0.999), eps=1e-08,
 #                              weight_decay=0, amsgrad=False)
 
-n_epoch = 5
+n_epoch = 4
 lr = 0.001
+
+train_accs = []
+val_accs = []
+train_loss = []
+
+
 
 for i in range(5):
     val_idx = crossva[i]
     train_idx = np.setdiff1d(idx, val_idx)
-    train_accs, val_accs, train_loss = train_val(n_epoch=n_epoch, lr_input=lr,
-                                                 dataset=dataset, training_idx=train_idx,
-                                                 val_idx=val_idx, load=False)
+    train_list, val_list, loss_list = train_val(n_epoch=n_epoch, lr_input=lr,
+                                                dataset=dataset, training_idx=train_idx,
+                                                val_idx=val_idx, load=False)
+    train_accs.append(train_list)
+    val_accs.append(val_list)
+    train_loss.append(loss_list)
+
+    # The following code plot the train, val, loss for each of 5-fold
     # plt.figure()
     # plt.subplot(2, 1, 1)
     # plt.plot(np.arange(n_epoch), train_accs, color='blue', label='train')
@@ -51,11 +62,39 @@ for i in range(5):
     # plt.savefig(fname='Result'+str(i))
     # plt.close()
 
+# transfer list of list into 2D numpy array
+train_array = np.array(train_accs)
+val_array = np.array(val_accs)
+train_mean = train_array.mean(0)
+val_mean = val_array.mean(0)
+train_std = train_array.std(0)
+val_std = val_array.std(0)
 
+plt.figure()
+plt.plot(np.arange(n_epoch), train_mean, color='green', label='train')
+plt.plot(np.arange(n_epoch), val_mean, color='red', label='val')
+plt.errorbar(np.arange(n_epoch), train_mean, yerr = train_std, fmt='o',
+             color='green', alpha=0.3, elinewidth=3)
+plt.errorbar(np.arange(n_epoch), val_mean, yerr = val_std, fmt='o',
+             color='red', alpha=0.3, elinewidth=3)
+plt.title('lr='+str(lr))
+plt.ylabel("accuracy")
+plt.xlabel("epoch")
+plt.legend()
+plt.savefig(fname='Accruacy')
+plt.close()
 
-
-
-
+plt.figure()
+loss_mean = np.array(train_loss).mean(0)
+loss_std = np.array(train_loss).std(0)
+plt.plot(np.arange(n_epoch), loss_mean, color='blue')
+plt.errorbar(np.arange(n_epoch), loss_mean, yerr=loss_std, fmt='o',
+             color='blue', alpha=0.3)
+plt.ylabel("loss")
+plt.xlabel("epoch")
+plt.savefig(fname='Loss')
+plt.close()
+print("finish successfully")
 
 
 
