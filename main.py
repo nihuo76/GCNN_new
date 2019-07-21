@@ -50,9 +50,9 @@ plt.figure()
 plt.plot(np.arange(n_epoch), train_mean, color='green', label='train')
 plt.plot(np.arange(n_epoch), val_mean, color='red', label='val')
 plt.errorbar(np.arange(n_epoch), train_mean, yerr = train_std, fmt='o',
-             color='green', alpha=0.3)
+             color='green', alpha=0.1, elinewidth=1)
 plt.errorbar(np.arange(n_epoch), val_mean, yerr = val_std, fmt='o',
-             color='red', alpha=0.3)
+             color='red', alpha=0.1, elinewidth=1)
 plt.title('lr='+str(lr))
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
