@@ -7,16 +7,15 @@ import copy
 
 # weight will be saved to & loaded from 'best_acc.pt'
 
-def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = MyLayer().to(device)
+def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg, device_in):
+    model = MyLayer().to(device_in)
     if load:
         model.load_state_dict(torch.load('best_acc.pt'))
         best_model_wts = copy.deepcopy(model.state_dict())
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr_input,
                                  betas=(0.9, 0.999), eps=1e-08,
-                                 weight_decay=0, amsgrad=False)
+                                 weight_decay=reg, amsgrad=False)
     train_loss = []
     train_accs = []
     val_accs = []
@@ -30,7 +29,7 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load):
         # epoch_loss is a list including all the losses
         for train_i in training_idx:
             data = dataset[train_i]
-            data = data.to(device)
+            data = data.to(device_in)
             optimizer.zero_grad()
             train_out = model(data.x, data.edge_index, data.edge_attr)
             # data.y is the groundturth and needs to be transferred to the correct shape
@@ -50,7 +49,7 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load):
         with torch.no_grad():
             for val_i in val_idx:
                 data = dataset[val_i]
-                data = data.to(device)
+                data = data.to(device_in)
                 val_out = model(data.x, data.edge_index, data.edge_attr)
                 acc = val_out.max(1)[1].eq(data.y.view(-1).type(torch.long))
                 val_batch_acc.append(acc.cpu().numpy())

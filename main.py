@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
+import torch
 
 dataset = Hamiltonian(k_n=1)
 # N is number of samples
@@ -21,15 +22,17 @@ lr = 0.001
 train_accs = []
 val_accs = []
 train_loss = []
+regul = 1
 
-
+device = torch.device('cuda')
 since = time.time()
 for i in range(5):
     val_idx = crossva[i]
     train_idx = np.setdiff1d(idx, val_idx)
     train_list, val_list, loss_list = train_val(n_epoch=n_epoch, lr_input=lr,
                                                 dataset=dataset, training_idx=train_idx,
-                                                val_idx=val_idx, load=False)
+                                                val_idx=val_idx, load=False,
+                                                reg=regul, device_in=device)
     train_accs.append(train_list)
     val_accs.append(val_list)
     train_loss.append(loss_list)
@@ -49,15 +52,15 @@ val_std = val_array.std(0)
 plt.figure()
 plt.plot(np.arange(n_epoch), train_mean, color='green', label='train')
 plt.plot(np.arange(n_epoch), val_mean, color='red', label='val')
-plt.errorbar(np.arange(n_epoch), train_mean, yerr = train_std, fmt='o',
+plt.errorbar(np.arange(n_epoch), train_mean, yerr=train_std, fmt='o',
              color='green', alpha=0.1, elinewidth=1)
-plt.errorbar(np.arange(n_epoch), val_mean, yerr = val_std, fmt='o',
+plt.errorbar(np.arange(n_epoch), val_mean, yerr=val_std, fmt='o',
              color='red', alpha=0.1, elinewidth=1)
-plt.title('lr='+str(lr))
+plt.title('lr='+str(lr)+'  regularize='+str(regul))
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend()
-plt.savefig(fname='Accruacy')
+plt.savefig(fname='Accruacy'+str(regul).replace('.', ''))
 plt.close()
 
 # plot the average loss across 5-fold during training
@@ -66,10 +69,11 @@ loss_mean = np.array(train_loss).mean(0)
 loss_std = np.array(train_loss).std(0)
 plt.plot(np.arange(n_epoch), loss_mean, color='blue')
 plt.errorbar(np.arange(n_epoch), loss_mean, yerr=loss_std, fmt='o',
-             color='blue', alpha=0.3)
+             color='blue', alpha=0.1, elinewidth=1)
 plt.ylabel("loss")
+plt.title('lr='+str(lr)+'  regularize='+str(regul))
 plt.xlabel("epoch")
-plt.savefig(fname='Loss')
+plt.savefig(fname='Loss'+str(regul).replace('.', ''))
 plt.close()
 print("finish successfully")
 print('Training complete in {:.0f}h'.format(time_elapsed // 3600))
