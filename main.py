@@ -24,7 +24,7 @@ val_accs = []
 train_loss = []
 regul = 0.01
 
-device = torch.device('cuda:3')
+device = torch.device('cuda')
 since = time.time()
 for i in range(5):
     val_idx = crossva[i]
