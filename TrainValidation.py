@@ -7,8 +7,10 @@ import copy
 
 # weight will be saved to & loaded from 'best_acc.pt'
 
-def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg, device_in):
-    model = MyLayer().to(device_in)
+def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg):
+    device = torch.device("cuda")
+    model = MyLayer()
+    model = model.to(device)
     if load:
         model.load_state_dict(torch.load('best_acc.pt'))
         best_model_wts = copy.deepcopy(model.state_dict())
@@ -29,7 +31,7 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg, devi
         # epoch_loss is a list including all the losses
         for train_i in training_idx:
             data = dataset[train_i]
-            data = data.to(device_in)
+            data = data.to(device)
             optimizer.zero_grad()
             train_out = model(data.x, data.edge_index, data.edge_attr)
             # data.y is the groundturth and needs to be transferred to the correct shape
@@ -49,7 +51,7 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg, devi
         with torch.no_grad():
             for val_i in val_idx:
                 data = dataset[val_i]
-                data = data.to(device_in)
+                data = data.to(device)
                 val_out = model(data.x, data.edge_index, data.edge_attr)
                 acc = val_out.max(1)[1].eq(data.y.view(-1).type(torch.long))
                 val_batch_acc.append(acc.cpu().numpy())

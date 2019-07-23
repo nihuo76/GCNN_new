@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
-import torch
+
 
 dataset = Hamiltonian(k_n=1)
 # N is number of samples
@@ -24,7 +24,6 @@ val_accs = []
 train_loss = []
 regul = 0.01
 
-device = torch.device('cuda')
 since = time.time()
 for i in range(5):
     val_idx = crossva[i]
@@ -32,7 +31,7 @@ for i in range(5):
     train_list, val_list, loss_list = train_val(n_epoch=n_epoch, lr_input=lr,
                                                 dataset=dataset, training_idx=train_idx,
                                                 val_idx=val_idx, load=False,
-                                                reg=regul, device_in=device)
+                                                reg=regul)
     train_accs.append(train_list)
     val_accs.append(val_list)
     train_loss.append(loss_list)
@@ -77,16 +76,6 @@ plt.savefig(fname='Loss'+str(regul).replace('.', ''))
 plt.close()
 print("finish successfully")
 print('Training complete in {:.0f}h'.format(time_elapsed // 3600))
-
-
-
-
-
-
-
-
-
-
 
 
 # training_idx, val_idx = idx[:300], idx[300:]
@@ -169,5 +158,3 @@ print('Training complete in {:.0f}h'.format(time_elapsed // 3600))
 # plt.plot(np.arange(n_epoch), train_loss)
 # plt.xlabel("epoch")
 # plt.ylabel("training loss")
-
-
