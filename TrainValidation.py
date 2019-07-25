@@ -1,4 +1,5 @@
-from mylayer import MyLayer
+# from mylayer import MyLayer
+from smalllayer import MyLayer
 import numpy as np
 import torch
 import torch.nn.functional as F

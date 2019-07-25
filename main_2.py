@@ -16,13 +16,13 @@ np.random.shuffle(idx)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 1500
+n_epoch = 2000
 lr = 0.001
 
 train_accs = []
 val_accs = []
 train_loss = []
-regul = 0.001
+regul = 0
 
 since = time.time()
 for i in range(5):
@@ -59,7 +59,7 @@ plt.title('lr='+str(lr)+'  regularize='+str(regul))
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend()
-plt.savefig(fname='Accruacy'+str(regul).replace('.', ''))
+plt.savefig(fname='Accruacy'+str(lr).replace('.', '')+str(regul).replace('.', ''))
 plt.close()
 
 # plot the average loss across 5-fold during training
@@ -72,7 +72,7 @@ plt.errorbar(np.arange(n_epoch), loss_mean, yerr=loss_std, fmt='o',
 plt.ylabel("loss")
 plt.title('lr='+str(lr)+'  regularize='+str(regul))
 plt.xlabel("epoch")
-plt.savefig(fname='Loss'+str(regul).replace('.', ''))
+plt.savefig(fname='Loss'+str(lr).replace('.', '')+str(regul).replace('.', ''))
 plt.close()
 print("finish successfully")
 print('Training complete in {:.0f}h'.format(time_elapsed // 3600))
