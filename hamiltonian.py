@@ -172,7 +172,7 @@ class Hamiltonian(torch.utils.data.Dataset):
 
             self.dataset.append(Data(x=x, edge_index=edge, edge_attr=weight, y=y))
             # Transform into the data form of torch_geometric
-            self.label.append(int(float(raw_data.tolist()[9] > 0.2)))
+            self.label.append(int(float(raw_data.tolist()[9] > 0)))
 
     def __getitem__(self, idx):
         data = self.dataset[idx]
