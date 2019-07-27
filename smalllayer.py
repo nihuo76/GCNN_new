@@ -10,9 +10,9 @@ class MyLayer(nn.Module):
 
         ###################################################
         # following algorithm achieves 70% accruacy
-        self.linear1 = nn.Linear(20, 32)
-        self.linear3 = nn.Linear(32, 64)
-        self.linear7 = nn.Linear(64, 2)
+        self.linear1 = nn.Linear(4, 8)
+        self.linear3 = nn.Linear(8, 16)
+        self.linear7 = nn.Linear(16, 2)
         # initialization to 0 or identity matrix
         # both achieve at least 60% of accuracy
         nn.init.zeros_(self.linear1.weight)

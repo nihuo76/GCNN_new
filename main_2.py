@@ -17,7 +17,7 @@ crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
 n_epoch = 2000
-lr = 0.001
+lr = 0.00001
 
 train_accs = []
 val_accs = []

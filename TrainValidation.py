@@ -5,7 +5,6 @@ import torch
 import torch.nn.functional as F
 import copy
 
-
 # weight will be saved to & loaded from 'best_acc.pt'
 
 def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg):
