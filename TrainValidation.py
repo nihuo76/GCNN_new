@@ -8,24 +8,20 @@ import copy
 
 # weight will be saved to & loaded from 'best_acc.pt'
 
-def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, L1lam, L2lam, rd):
+def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, rd):
     Usedevice = torch.device("cuda")
     model = MyLayer(drop_p=rd)
     model = model.to(Usedevice)
-    if load:
-        model.load_state_dict(torch.load('best_acc.pt'))
-        best_model_wts = copy.deepcopy(model.state_dict())
+    # model.load_state_dict(torch.load('best_acc.pt'))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr_input)
 
     train_loss = []
     train_accs = []
     val_accs = []
-    best_val_acc = 0.0
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1)
+    best_val_acc = 0.75
 
     for epoch in range(n_epoch):
-        scheduler.step()
         model.train()
         train_batch_accs = []
         train_batch_loss = []
@@ -69,10 +65,8 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, L1lam, L2
         val_batch_mean = np.array(val_batch_acc).mean()
         val_accs.append(val_batch_mean)
         print("epoch: ", epoch, "  val-acc: ", val_batch_mean, " train-acc: ", trainbatch_mean)
-        if val_batch_mean > best_val_acc and load:
+        if val_batch_mean > best_val_acc:
             best_model_wts = copy.deepcopy(model.state_dict())
-
-    if load:
-        torch.save(best_model_wts, 'best_acc.pt')
+            torch.save(best_model_wts, 'best_acc.pt')
 
     return train_accs, val_accs, train_loss
