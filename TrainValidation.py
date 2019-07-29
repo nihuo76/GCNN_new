@@ -8,7 +8,7 @@ import copy
 
 # weight will be saved to & loaded from 'best_acc.pt'
 
-def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, L1lam, L2lam, rd, momt):
+def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, L1lam, L2lam, rd):
     Usedevice = torch.device("cuda")
     model = MyLayer(drop_p=rd)
     model = model.to(Usedevice)
@@ -16,13 +16,13 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, L1lam, L2
         model.load_state_dict(torch.load('best_acc.pt'))
         best_model_wts = copy.deepcopy(model.state_dict())
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=lr_input,
-                                momentum=momt, nesterov=True)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr_input)
+
     train_loss = []
     train_accs = []
     val_accs = []
     best_val_acc = 0.0
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.1)
 
     for epoch in range(n_epoch):
         scheduler.step()

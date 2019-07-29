@@ -34,9 +34,8 @@ for i in range(5):
     train_list, val_list, loss_list = train_val(n_epoch=n_epoch, lr_input=lr,
                                                 dataset=dataset, training_idx=train_idx,
                                                 val_idx=val_idx, load=False,
-                                                L1lam=reg_L1, L2lam=reg_l2, rd=drop_p,
-                                                momt=mom)
-    train_accs.append(train_list)
+                                                L1lam=reg_L1, L2lam=reg_l2, rd=drop_p)
+
     val_accs.append(val_list)
     train_loss.append(loss_list)
 
