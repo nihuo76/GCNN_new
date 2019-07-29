@@ -16,13 +16,16 @@ np.random.shuffle(idx)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 3000
-lr = 0.01
+n_epoch = 500
+lr = 0.001
 
 train_accs = []
 val_accs = []
 train_loss = []
-regul = 0
+reg_L1 = 0
+reg_l2 = 0
+drop_p = 0
+mom = 0.9
 
 since = time.time()
 for i in range(5):
@@ -31,7 +34,8 @@ for i in range(5):
     train_list, val_list, loss_list = train_val(n_epoch=n_epoch, lr_input=lr,
                                                 dataset=dataset, training_idx=train_idx,
                                                 val_idx=val_idx, load=False,
-                                                reg=regul)
+                                                L1lam=reg_L1, L2lam=reg_l2, rd=drop_p,
+                                                momt=mom)
     train_accs.append(train_list)
     val_accs.append(val_list)
     train_loss.append(loss_list)
@@ -51,15 +55,15 @@ val_std = val_array.std(0)
 plt.figure()
 plt.plot(np.arange(n_epoch), train_mean, color='green', label='train')
 plt.plot(np.arange(n_epoch), val_mean, color='red', label='val')
-plt.errorbar(np.arange(n_epoch), train_mean, yerr=train_std, fmt='o',
-             color='green', alpha=0.1, elinewidth=1)
-plt.errorbar(np.arange(n_epoch), val_mean, yerr=val_std, fmt='o',
-             color='red', alpha=0.1, elinewidth=1)
-plt.title('lr='+str(lr)+'  regularize='+str(regul))
+# plt.errorbar(np.arange(n_epoch), train_mean, yerr=train_std, fmt='o',
+#              color='green', alpha=0.1, elinewidth=1)
+# plt.errorbar(np.arange(n_epoch), val_mean, yerr=val_std, fmt='o',
+#              color='red', alpha=0.1, elinewidth=1)
+plt.title('lr='+str(lr)+'  L1='+str(reg_L1))
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend()
-plt.savefig(fname='Accruacy'+str(lr).replace('.', '')+str(regul).replace('.', ''))
+plt.savefig(fname='Accruacy'+str(lr).replace('.', '')+str(reg_L1).replace('.', ''))
 plt.close()
 
 # plot the average loss across 5-fold during training
@@ -67,12 +71,12 @@ plt.figure()
 loss_mean = np.array(train_loss).mean(0)
 loss_std = np.array(train_loss).std(0)
 plt.plot(np.arange(n_epoch), loss_mean, color='blue')
-plt.errorbar(np.arange(n_epoch), loss_mean, yerr=loss_std, fmt='o',
-             color='blue', alpha=0.1, elinewidth=1)
+# plt.errorbar(np.arange(n_epoch), loss_mean, yerr=loss_std, fmt='o',
+#              color='blue', alpha=0.1, elinewidth=1)
 plt.ylabel("loss")
-plt.title('lr='+str(lr)+'  regularize='+str(regul))
+plt.title('lr='+str(lr)+'  L1='+str(reg_L1))
 plt.xlabel("epoch")
-plt.savefig(fname='Loss'+str(lr).replace('.', '')+str(regul).replace('.', ''))
+plt.savefig(fname='Loss'+str(lr).replace('.', '')+str(reg_L1).replace('.', ''))
 plt.close()
 print("finish successfully")
 print('Training complete in {:.0f}h'.format(time_elapsed // 3600))

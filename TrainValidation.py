@@ -3,27 +3,29 @@ from smalllayer import MyLayer
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch.optim import lr_scheduler
 import copy
 
 # weight will be saved to & loaded from 'best_acc.pt'
 
-def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg):
-    device = torch.device("cuda")
-    model = MyLayer()
-    model = model.to(device)
+def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, L1lam, L2lam, rd, momt):
+    Usedevice = torch.device("cuda")
+    model = MyLayer(drop_p=rd)
+    model = model.to(Usedevice)
     if load:
         model.load_state_dict(torch.load('best_acc.pt'))
         best_model_wts = copy.deepcopy(model.state_dict())
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr_input,
-                                 betas=(0.9, 0.999), eps=1e-08,
-                                 weight_decay=reg, amsgrad=False)
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr_input,
+                                momentum=momt, nesterov=True)
     train_loss = []
     train_accs = []
     val_accs = []
     best_val_acc = 0.0
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)
 
     for epoch in range(n_epoch):
+        scheduler.step()
         model.train()
         train_batch_accs = []
         train_batch_loss = []
@@ -31,11 +33,19 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg):
         # epoch_loss is a list including all the losses
         for train_i in training_idx:
             data = dataset[train_i]
-            data = data.to(device)
+            data = data.to(Usedevice)
             optimizer.zero_grad()
             train_out = model(data.x, data.edge_index, data.edge_attr)
             # data.y is the groundturth and needs to be transferred to the correct shape
             loss = F.nll_loss(train_out, data.y.view(-1).type(torch.long))
+            L1_penalty = torch.tensor(0.)
+            L2_penalty = torch.tensor(0.)
+            L1_penalty = L1_penalty.to(Usedevice)
+            L2_penalty = L2_penalty.to(Usedevice)
+            for param in model.parameters():
+                L1_penalty += param.norm(p=1)
+                L2_penalty += param.norm(p='fro')
+            loss = loss + L2lam * L2_penalty + L1lam * L1_penalty
             loss.backward()
             optimizer.step()
             train_batch_loss.append(loss.data.cpu().numpy())
@@ -43,21 +53,22 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, load, reg):
             # namely the predicted category
             acc = train_out.max(1)[1].eq(data.y.view(-1).type(torch.long))
             train_batch_accs.append(acc.cpu().numpy())
-        train_accs.append(np.array(train_batch_accs).mean())
-        train_loss.append(np.array(train_batch_loss).mean())
+        trainbatch_mean = np.array(train_batch_accs).mean()
+        train_accs.append(trainbatch_mean)
+        train_loss.append(trainbatch_mean)
 
         model.eval()
         val_batch_acc = []
         with torch.no_grad():
             for val_i in val_idx:
                 data = dataset[val_i]
-                data = data.to(device)
+                data = data.to(Usedevice)
                 val_out = model(data.x, data.edge_index, data.edge_attr)
                 acc = val_out.max(1)[1].eq(data.y.view(-1).type(torch.long))
                 val_batch_acc.append(acc.cpu().numpy())
         val_batch_mean = np.array(val_batch_acc).mean()
         val_accs.append(val_batch_mean)
-        print("epoch: ", epoch, "  val-batch-accuracy: ", val_batch_mean)
+        print("epoch: ", epoch, "  val-acc: ", val_batch_mean, " train-acc: ", trainbatch_mean)
         if val_batch_mean > best_val_acc and load:
             best_model_wts = copy.deepcopy(model.state_dict())
 
