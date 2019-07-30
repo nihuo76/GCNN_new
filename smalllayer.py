@@ -17,9 +17,9 @@ class MyLayer(nn.Module):
         self.drop2 = nn.Dropout(p=drop_p)
         # initialization to 0 or identity matrix
         # both achieve at least 60% of accuracy
-        # nn.init.zeros_(self.linear1.weight)
-        # nn.init.zeros_(self.linear3.weight)
-        # nn.init.zeros_(self.linear7.weight)
+        nn.init.zeros_(self.linear1.weight)
+        nn.init.zeros_(self.linear3.weight)
+        nn.init.zeros_(self.linear7.weight)
 
 
     def forward(self, x, edge, weight):

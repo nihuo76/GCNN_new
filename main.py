@@ -17,14 +17,14 @@ crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
 n_epoch = 2000
-lr = 0.001
+lr = 0.0001
 
 train_accs = []
 val_accs = []
 train_loss = []
 reg_L1 = 0
 reg_L2 = 0
-drop_p = 0.1
+drop_p = 0.05
 
 since = time.time()
 for i in range(5):
@@ -34,7 +34,7 @@ for i in range(5):
                                                 dataset=dataset, training_idx=train_idx,
                                                 val_idx=val_idx, L1lam=reg_L1,
                                                 L2lam=reg_L2, rd=drop_p)
-
+    train_accs.append(train_list)
     val_accs.append(val_list)
     train_loss.append(loss_list)
 
