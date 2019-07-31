@@ -93,7 +93,7 @@ class Hamiltonian(torch.utils.data.Dataset):
                 h_row = []
                 # len(orb_list) + 4 because 3 x,y,z coordinate
                 # of atom center in unit cell and the atom center itself
-                atom_feat = np.zeros((n_orb.squeeze(), 4), dtype=np.float32)
+                atom_feat = np.zeros((n_orb.squeeze(), 20), dtype=np.float32)
                 # atom_feat's dimension must be ?*20.
                 # orb_list is the possible name of the orbital
                 for a in range(atom_info[0].squeeze()):
@@ -102,10 +102,10 @@ class Hamiltonian(torch.utils.data.Dataset):
                         # atom number of each atom
                         atom_feat[j, -4: -1] = atom_info[2][a] + np.array(pos_list[i]) * cell_size
                         # -4:-1 is the coordinate of the atom w.r.t. the unit cell
-                        # elements_name = atom_info[7][0][a][j - (atom_info[-2][a][0] - 1)][0][0]
+                        elements_name = atom_info[7][0][a][j - (atom_info[-2][a][0] - 1)][0][0]
                         # elements_name should be orbital name here
                         # since it is the orbitals' names of each atom
-                        # atom_feat[j, orb_list[elements_name]] = 1
+                        atom_feat[j, orb_list[elements_name]] = 1
                         # mark orbitals' names of each atom to be 1
                 x_feat.append(atom_feat)
 

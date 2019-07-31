@@ -1,5 +1,5 @@
-# from mylayer import MyLayer
-from smalllayer import MyLayer
+from mylayer import MyLayer
+# from smalllayer import MyLayer
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -49,9 +49,8 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, r
             # namely the predicted category
             acc = train_out.max(1)[1].eq(data.y.view(-1).type(torch.long))
             train_batch_accs.append(acc.cpu().numpy())
-        trainbatch_mean = np.array(train_batch_accs).mean()
-        train_accs.append(trainbatch_mean)
-        train_loss.append(trainbatch_mean)
+        train_accs.append(np.array(train_batch_accs).mean())
+        train_loss.append(np.array(train_batch_loss).mean())
 
         model.eval()
         val_batch_acc = []
