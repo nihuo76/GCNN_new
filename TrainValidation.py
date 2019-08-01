@@ -49,7 +49,8 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, r
             # namely the predicted category
             acc = train_out.max(1)[1].eq(data.y.view(-1).type(torch.long))
             train_batch_accs.append(acc.cpu().numpy())
-        train_accs.append(np.array(train_batch_accs).mean())
+        train_batch_mean = np.array(train_batch_accs).mean()
+        train_accs.append(train_batch_mean)
         train_loss.append(np.array(train_batch_loss).mean())
 
         model.eval()
@@ -63,7 +64,7 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, r
                 val_batch_acc.append(acc.cpu().numpy())
         val_batch_mean = np.array(val_batch_acc).mean()
         val_accs.append(val_batch_mean)
-        print("epoch: ", epoch, "  val-acc: ", val_batch_mean, " train-acc: ", trainbatch_mean)
+        print("epoch: ", epoch, "  val-acc: ", val_batch_mean, " train-acc: ", train_batch_mean)
         if val_batch_mean > best_val_acc:
             best_model_wts = copy.deepcopy(model.state_dict())
             torch.save(best_model_wts, 'best_acc.pt')
