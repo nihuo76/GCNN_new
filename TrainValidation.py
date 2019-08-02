@@ -1,5 +1,5 @@
 from mylayer import MyLayer
-# from smalllayer import MyLayer
+from Peng_Chu import Net
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -8,9 +8,12 @@ import copy
 
 # weight will be saved to & loaded from 'best_acc.pt'
 
-def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, rd):
+def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, rd, method="mine"):
     Usedevice = torch.device("cuda")
-    model = MyLayer(drop_p=rd)
+    if method == "Peng":
+        model = Net()
+    else:
+        model = MyLayer(drop_p=rd)
     model = model.to(Usedevice)
     # model.load_state_dict(torch.load('best_acc.pt'))
 
@@ -19,7 +22,7 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, r
     train_loss = []
     train_accs = []
     val_accs = []
-    best_val_acc = 0.75
+    best_val_acc = 0.80
 
     for epoch in range(n_epoch):
         model.train()
@@ -34,14 +37,14 @@ def train_val(n_epoch, lr_input, dataset, training_idx, val_idx, L1lam, L2lam, r
             train_out = model(data.x, data.edge_index, data.edge_attr)
             # data.y is the groundturth and needs to be transferred to the correct shape
             loss = F.nll_loss(train_out, data.y.view(-1).type(torch.long))
-            L1_penalty = torch.tensor(0.)
-            L2_penalty = torch.tensor(0.)
-            L1_penalty = L1_penalty.to(Usedevice)
-            L2_penalty = L2_penalty.to(Usedevice)
-            for param in model.parameters():
-                L1_penalty += param.norm(p=1)
-                L2_penalty += param.norm(p='fro')
-            loss = loss + L2lam * L2_penalty + L1lam * L1_penalty
+            # L1_penalty = torch.tensor(0.)
+            # L2_penalty = torch.tensor(0.)
+            # L1_penalty = L1_penalty.to(Usedevice)
+            # L2_penalty = L2_penalty.to(Usedevice)
+            # for param in model.parameters():
+            #     L1_penalty += param.norm(p=1)
+            #     L2_penalty += param.norm(p='fro')
+            # loss = loss + L2lam * L2_penalty + L1lam * L1_penalty
             loss.backward()
             optimizer.step()
             train_batch_loss.append(loss.data.cpu().numpy())
