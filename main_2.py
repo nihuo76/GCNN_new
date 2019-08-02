@@ -1,7 +1,7 @@
 from hamiltonian import Hamiltonian
 import numpy as np
 import matplotlib.pyplot as plt
-from TrainValidation import train_val
+from baseline import train_val
 import time
 
 
@@ -16,15 +16,15 @@ np.random.shuffle(idx)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 20
-lr = 0.0001
+n_epoch = 400
+lr = 0.001
 
 train_accs = []
 val_accs = []
 train_loss = []
 reg_L1 = 0
 reg_L2 = 0
-drop_p = 0.3
+drop_p = 0.4
 
 since = time.time()
 for i in range(5):
