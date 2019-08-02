@@ -38,7 +38,7 @@ class Hamiltonian(torch.utils.data.Dataset):
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
     def __init__(self, root='data/hamiltonMER', real_thrd=0.0001,
-                 transform=None, pre_transform=None, k_n=0):
+                 transform=None, pre_transform=None, k_n=0, y_cut=0):
         self.name = 'Hamiltonian'
         super(Hamiltonian, self).__init__()
         # super(Hamiltonian, self) is equivalent to
@@ -167,12 +167,12 @@ class Hamiltonian(torch.utils.data.Dataset):
             # x = torch.ones(((n_orb.squeeze()) * ((2 * k_n + 1)**3), 1))
             # x = torch.tensor(np.tile(atom_feat, ((2 * k_n + 1)**3, 1)).astype(np.float32))
             x = torch.tensor(x_feat)
-            y = torch.tensor(float(raw_data.tolist()[9] > 0))
+            y = torch.tensor(float(raw_data.tolist()[9] > y_cut))
             # y is True/False for material Electrical conductivity
 
             self.dataset.append(Data(x=x, edge_index=edge, edge_attr=weight, y=y))
             # Transform into the data form of torch_geometric
-            self.label.append(int(float(raw_data.tolist()[9] > 0)))
+            self.label.append(int(float(raw_data.tolist()[9] > y_cut)))
 
     def __getitem__(self, idx):
         data = self.dataset[idx]

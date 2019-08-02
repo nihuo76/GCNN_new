@@ -1,7 +1,7 @@
 from hamiltonian import Hamiltonian
 import numpy as np
 import matplotlib.pyplot as plt
-from baseline import train_val
+from TrainValidation import train_val
 import time
 
 
@@ -16,15 +16,15 @@ np.random.shuffle(idx)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 400
-lr = 0.001
+n_epoch = 20
+lr = 0.0001
 
 train_accs = []
 val_accs = []
 train_loss = []
 reg_L1 = 0
 reg_L2 = 0
-drop_p = 0.4
+drop_p = 0.3
 
 since = time.time()
 for i in range(5):
@@ -62,7 +62,7 @@ plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend()
 # plt.savefig(fname='Accruacy'+str(lr).replace('.', '')+str(reg_L1).replace('.', ''))
-plt.savefig(fname='Accruacy_2')
+plt.savefig(fname='Accruacy_3')
 plt.close()
 
 # plot the average loss across 5-fold during training
@@ -76,7 +76,7 @@ plt.ylabel("loss")
 plt.title('lr='+str(lr)+'  L1='+str(reg_L1)+' L2='+str(reg_L2)+' drop='+str(drop_p))
 plt.xlabel("epoch")
 # plt.savefig(fname='Loss'+str(lr).replace('.', '')+str(reg_L1).replace('.', ''))
-plt.savefig(fname='Loss_2')
+plt.savefig(fname='Loss_3')
 plt.close()
 print("finish successfully")
 print('Training complete in {:.0f}h'.format(time_elapsed // 3600))

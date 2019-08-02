@@ -5,7 +5,7 @@ from TrainValidation import train_val
 import time
 
 
-dataset = Hamiltonian(k_n=1)
+dataset = Hamiltonian(root='data/hamiltonian', k_n=1, y_cut=0.2)
 # N is number of samples
 N = len(dataset)
 # idx is the index of the dataset that is going to be splited
@@ -24,7 +24,7 @@ val_accs = []
 train_loss = []
 reg_L1 = 0
 reg_L2 = 0
-drop_p = 0.5
+drop_p = 0.2
 
 since = time.time()
 for i in range(5):

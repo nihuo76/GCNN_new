@@ -1,11 +1,11 @@
 from hamiltonian import Hamiltonian
 import numpy as np
 import matplotlib.pyplot as plt
-from TrainValidation import train_val
+from baseline import train_val
 import time
 
 
-dataset = Hamiltonian(k_n=1)
+dataset = Hamiltonian(root='data/hamiltonMER', k_n=1, y_cut=0)
 # N is number of samples
 N = len(dataset)
 # idx is the index of the dataset that is going to be splited
@@ -16,15 +16,15 @@ np.random.shuffle(idx)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 20
-lr = 0.0001
+n_epoch = 400
+lr = 0.001
 
 train_accs = []
 val_accs = []
 train_loss = []
 reg_L1 = 0
 reg_L2 = 0
-drop_p = 0.3
+drop_p = 0.4
 
 since = time.time()
 for i in range(5):
@@ -57,12 +57,12 @@ plt.plot(np.arange(n_epoch), val_mean, color='red', label='val')
 #              color='green', alpha=0.1, elinewidth=1)
 # plt.errorbar(np.arange(n_epoch), val_mean, yerr=val_std, fmt='o',
 #              color='red', alpha=0.1, elinewidth=1)
-plt.title('lr='+str(lr)+' L1='+str(reg_L1)+' L2='+str(reg_L2)+' drop='+str(drop_p))
+plt.title('lr='+str(lr))
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend()
 # plt.savefig(fname='Accruacy'+str(lr).replace('.', '')+str(reg_L1).replace('.', ''))
-plt.savefig(fname='Accruacy_3')
+plt.savefig(fname='Accruacy_Peng')
 plt.close()
 
 # plot the average loss across 5-fold during training
@@ -73,10 +73,10 @@ plt.plot(np.arange(n_epoch), loss_mean, color='blue')
 # plt.errorbar(np.arange(n_epoch), loss_mean, yerr=loss_std, fmt='o',
 #              color='blue', alpha=0.1, elinewidth=1)
 plt.ylabel("loss")
-plt.title('lr='+str(lr)+'  L1='+str(reg_L1)+' L2='+str(reg_L2)+' drop='+str(drop_p))
+plt.title('lr='+str(lr))
 plt.xlabel("epoch")
 # plt.savefig(fname='Loss'+str(lr).replace('.', '')+str(reg_L1).replace('.', ''))
-plt.savefig(fname='Loss_3')
+plt.savefig(fname='Loss_Peng')
 plt.close()
 print("finish successfully")
 print('Training complete in {:.0f}h'.format(time_elapsed // 3600))
