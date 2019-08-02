@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
 
+y_threshold = 0
 
-dataset = Hamiltonian(root='data/hamiltonian', k_n=1, y_cut=0.2)
+dataset = Hamiltonian(root='data/hamiltonMER', k_n=1, y_cut=y_threshold)
 # N is number of samples
 N = len(dataset)
 # idx is the index of the dataset that is going to be splited
@@ -13,10 +14,19 @@ idx = np.arange(N)
 # random shuffle the idx dataset
 np.random.shuffle(idx)
 
+# get the random guess probability
+counter = 0
+for j in range(N):
+    data = dataset[j]
+    if data.y > y_threshold:
+        counter += 1
+
+random_guess = max(counter/N, 1-counter/N)
+
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 10
+n_epoch = 5
 lr = 0.001
 
 train_accs = []
@@ -45,12 +55,15 @@ train_mean = train_array.mean(0)
 val_mean = val_array.mean(0)
 train_std = train_array.std(0)
 val_std = val_array.std(0)
+random_guess = np.tile(random_guess, n_epoch)
+
 
 # plot the average accuracy of the 5-fold for
 # both train and validation
 plt.figure()
 plt.plot(np.arange(n_epoch), train_mean, color='green', label='train')
 plt.plot(np.arange(n_epoch), val_mean, color='red', label='val')
+plt.plot(np.arange(n_epoch), random_guess, color='blue', linestyle=':', label='guess')
 # plt.errorbar(np.arange(n_epoch), train_mean, yerr=train_std, fmt='o',
 #              color='green', alpha=0.1, elinewidth=1)
 # plt.errorbar(np.arange(n_epoch), val_mean, yerr=val_std, fmt='o',

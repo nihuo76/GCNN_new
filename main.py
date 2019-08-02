@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
 
-
 dataset = Hamiltonian(root='data/hamiltonian', k_n=1, y_cut=0.2)
 # N is number of samples
 N = len(dataset)
