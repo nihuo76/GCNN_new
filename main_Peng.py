@@ -26,7 +26,7 @@ random_guess = max(counter/N, 1-counter/N)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 5
+n_epoch = 400
 lr = 0.001
 
 train_accs = []
