@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
 
+np.random.seed(0)
+
 y_threshold = 0
 
 dataset = Hamiltonian(root='data/hamiltonMER', k_n=1, y_cut=y_threshold)
@@ -26,8 +28,8 @@ random_guess = max(counter/N, 1-counter/N)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 400
-lr = 0.001
+n_epoch = 3000
+lr = 0.0001
 
 train_accs = []
 val_accs = []

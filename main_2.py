@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
 
-y_threshold = 0.2
+np.random.seed(3)
 
-dataset = Hamiltonian(k_n=1, root='data/hamiltonian', y_cut=y_threshold)
+y_threshold = 0.0
+
+dataset = Hamiltonian(root='data/hamiltonMER', k_n=1, y_cut=y_threshold)
 # N is number of samples
 N = len(dataset)
 # idx is the index of the dataset that is going to be splited
@@ -26,7 +28,7 @@ random_guess = max(counter/N, 1-counter/N)
 crossva = [None]*5
 crossva[0], crossva[1], crossva[2], crossva[3], crossva[4] = np.array_split(idx, 5)
 
-n_epoch = 5
+n_epoch = 3000
 lr = 0.0001
 
 train_accs = []

@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 from TrainValidation import train_val
 import time
 
-y_threshold = 0.2
+np.random.seed(2)
 
-dataset = Hamiltonian(root='data/hamiltonian', k_n=1, y_cut=y_threshold)
+y_threshold = 0.0
+
+dataset = Hamiltonian(root='data/hamiltonMER', k_n=1, y_cut=y_threshold)
 # N is number of samples
 N = len(dataset)
 # idx is the index of the dataset that is going to be splited
@@ -32,7 +34,7 @@ lr = 0.0001
 train_accs = []
 val_accs = []
 train_loss = []
-drop_p = 0.2
+drop_p = 0.3
 
 since = time.time()
 for i in range(5):
