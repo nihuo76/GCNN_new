@@ -15,6 +15,8 @@ for orb in orb_file:
     orb_list[orb.replace('\n', '')] = counter
     counter += 1
 
+rot90_counter = 0
+
 for f_name in mat_files:
     raw_data = sio.loadmat(join(root, f_name))['Hr'][0][0]
     hamiltonian, n_orb, n_cell, cell_pos = raw_data.tolist()[: 4]
@@ -26,7 +28,6 @@ for f_name in mat_files:
             for k in range(-k_n, k_n + 1):
                 pos_list.append(np.array([i, j, k]))
     h_mat = []
-    x_feat = []
     for i in range(len(pos_list)):
         h_row = []
         for j in range(len(pos_list)):
@@ -45,9 +46,28 @@ for f_name in mat_files:
     h_real = np.absolute(h)
     h_plot = h_real
     np.fill_diagonal(h_plot, 0)
-
-    plt.contourf(np.arange(x_feat.shape[1]),
-                np.arange(x_feat.shape[0]), x_feat, cmap='rainbow')
+    plt.imshow(h_plot, cmap='viridis', alpha=0.5)
+    plt.title("original")
     plt.colorbar()
-    plt.savefig(fname= join('x_visual',f_name.replace('.','')))
+    plt.axis(aspect='image')
+    plt.savefig(fname=join('original', f_name.replace('.', '')))
     plt.close()
+    plt.imshow(np.rot90(h_plot, 2), cmap='viridis', alpha=0.5)
+    plt.title("rotation 180")
+    plt.colorbar()
+    plt.axis(aspect='image')
+    plt.savefig(fname=join('rotation180', f_name.replace('.', '')))
+    plt.close()
+    plt.imshow(np.rot90(h_plot, 2)-h_plot, cmap='viridis', alpha=0.5)
+    plt.title("difference")
+    plt.colorbar()
+    plt.axis(aspect='image')
+    plt.savefig(fname=join('difference', f_name.replace('.', '')))
+    plt.close()
+    if (np.prod(np.rot90(h_plot, 2)==h_plot))==1:
+        rot90_counter += 1
+
+print("The number of centrosymmetric matrix is ", rot90_counter)
+
+
+
